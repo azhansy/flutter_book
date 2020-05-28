@@ -2,6 +2,10 @@
 
 A new Flutter project.
 
+Study to flutter:
+https://book.flutterchina.club/chapter1
+
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
