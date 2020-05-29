@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_book/new_route.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,10 +11,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-       
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+//      onGenerateRoute: (RouteSettings settings) {
+//        String routeName = settings.name;
+//        print("有趣======$routeName");
+//        return null;
+//
+//        return MaterialPageRoute(builder: (context) {
+//          return MyHomePage(title: 'Flutter Demo Home Page');
+//        });
+//      },
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -39,13 +48,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
       body: Center(
         child: Column(
-          
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
@@ -55,6 +63,24 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            MaterialButton(
+              onPressed: () async {
+                var result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) {
+                        return NewRoutePage();
+                      },
+                      fullscreenDialog: false,
+                      maintainState: false),
+                );
+//              var result  = await Navigator.pushNamed(context, "routeName");
+
+                print("路由返回值：$result");
+              },
+              child: Text("open new route"),
+              textColor: Colors.blue,
+            )
           ],
         ),
       ),
