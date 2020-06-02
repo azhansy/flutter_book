@@ -1,8 +1,34 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_book/new_route.dart';
+import 'package:flutter_book/core/base_config.dart';
+import 'package:flutter_book/page/clip_test_page.dart';
+import 'package:flutter_book/page/flutter_error_page.dart';
+import 'package:flutter_book/page/new_route_page.dart';
+import 'package:flutter_book/page/scroll_page.dart';
 
 void main() {
-  runApp(MyApp());
+  ///1、处理Flutter为我们捕获的异常
+  FlutterError.onError = (FlutterErrorDetails details) {
+    print(details);
+  };
+  runZoned(
+    () {
+      runApp(MyApp());
+    },
+    //拦截所有的print
+    zoneSpecification: new ZoneSpecification(
+        print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
+      if (BaseConfig.DEBUG) {
+        parent.print(zone, "Intercepted: $line");
+      }
+    }),
+    onError: (obj, stack) {
+      print("onError");
+//      var details=makeDetails(obj,stack);
+//      reportError(details);
+    },
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -38,13 +64,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  List<String> list = ["跳转路由", "flutter异常处理", "进度条", "clip"];
 
   @override
   Widget build(BuildContext context) {
@@ -53,42 +73,54 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            MaterialButton(
-              onPressed: () async {
-                var result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) {
-                        return NewRoutePage();
-                      },
-                      fullscreenDialog: false,
-                      maintainState: false),
-                );
-//              var result  = await Navigator.pushNamed(context, "routeName");
-
-                print("路由返回值：$result");
+        child: ListView.separated(
+          separatorBuilder: (BuildContext context, int index) {
+            return Divider();
+          },
+          itemBuilder: (BuildContext context, int index) {
+            return GestureDetector(
+              onTap: () {
+                if (index == 0) {
+                  pushNewRoutePage(context);
+                } else if (index == 1) {
+                  pushFlutterErrorPage(context);
+                } else if (index == 2) {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ScrollPage()));
+                } else if (index == 3) {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ClipTestPage()));
+                }
               },
-              child: Text("open new route"),
-              textColor: Colors.blue,
-            )
-          ],
+              child: ListTile(
+                title: Text(list[index], style: TextStyle(color: Colors.blue)),
+              ),
+            );
+          },
+          itemCount: list.length,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  Future pushNewRoutePage(BuildContext context) async {
+    var result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) {
+            return NewRoutePage();
+          },
+          fullscreenDialog: false,
+          maintainState: false),
+    );
+    //              var result  = await Navigator.pushNamed(context, "routeName");
+
+    print("路由返回值：$result");
+  }
+
+  void pushFlutterErrorPage(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return FlutterErrorPage();
+    }));
   }
 }
