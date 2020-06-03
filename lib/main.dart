@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_book/core/base_config.dart';
 import 'package:flutter_book/page/clip_test_page.dart';
+import 'package:flutter_book/page/custom_scroll_view_test_route.dart';
 import 'package:flutter_book/page/flutter_error_page.dart';
 import 'package:flutter_book/page/new_route_page.dart';
 import 'package:flutter_book/page/scroll_page.dart';
@@ -64,7 +65,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> list = ["跳转路由", "flutter异常处理", "进度条", "clip"];
+  List<String> list = ["跳转路由", "flutter异常处理", "进度条", "clip", "scroll"];
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +91,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 } else if (index == 3) {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ClipTestPage()));
+                } else if (index == 4) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CustomScrollViewTestRoute()));
                 }
               },
               child: ListTile(
